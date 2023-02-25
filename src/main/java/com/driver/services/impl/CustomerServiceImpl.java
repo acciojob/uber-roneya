@@ -51,13 +51,13 @@ public class CustomerServiceImpl implements CustomerService {
 	public TripBooking bookTrip(int customerId, String fromLocation, String toLocation, int distanceInKm) throws Exception{
 		//Book the driver with lowest driverId who is free (cab available variable is Boolean.TRUE). If no driver is available, throw "No cab available!" exception
 		//Avoid using SQL query
-		TripBooking tripBooking = new TripBooking();
+
 		Driver driver = null;
 		List<Driver> l = driverRepository2.findAll();
 
 		for(Driver d:l)
 		{
-			if(d.getCab().getAvailable()== true)
+			if(d.getCab().getAvailable())
 			{
 				if( (driver == null) || (driver.getDriverId()>d.getDriverId()))
 				{
@@ -69,20 +69,26 @@ public class CustomerServiceImpl implements CustomerService {
 		{
 			throw new Exception("No cab available!");
 		}
-		Customer customer = customerRepository2.findById(customerId).get();
-		driver.getCab().setAvailable(false);
-		tripBooking.setCustomer(customer);
-		tripBooking.setFromLocation(fromLocation);
-		tripBooking.setToLocation(toLocation);
-		tripBooking.setDistanceInKm(distanceInKm);
-		tripBooking.setStatus(TripStatus.CONFIRMED);
+		TripBooking newTripBooked = new TripBooking();
+		newTripBooked.setCustomer(customerRepository2.findById(customerId).get());
+		newTripBooked.setFromLocation(fromLocation);
+		newTripBooked.setToLocation(toLocation);
+		newTripBooked.setDistanceInKm(distanceInKm);
+		newTripBooked.setStatus(TripStatus.CONFIRMED);
+		newTripBooked.setDriver(driver);
+		int rate = driver.getCab().getPerKmRate();
+		newTripBooked.setBill(distanceInKm*rate);
 
-		customer.getTripBookingsList().add(tripBooking);
-		customerRepository2.save(customer);
-		driver.getTripBookingsList().add(tripBooking);
+		driver.getCab().setAvailable(false);
 		driverRepository2.save(driver);
 
-		return  tripBooking;
+		Customer customer = customerRepository2.findById(customerId).get();
+		customer.getTripBookingsList ().add(newTripBooked);
+		customerRepository2.save(customer);
+
+
+		tripBookingRepository2.save(newTripBooked);
+		return newTripBooked;
 
 	}
 
