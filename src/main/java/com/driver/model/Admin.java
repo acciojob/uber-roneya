@@ -10,7 +10,7 @@ public class Admin {
 
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private int adminId;
 
     private String username;
