@@ -9,17 +9,17 @@ import java.util.List;
 public class Driver {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private int driverID;
+    private int driverId;
     private String mobile;
     private String password;
     public Driver(){}
 
-    public int getDriverID() {
-        return driverID;
+    public int getDriverId() {
+        return driverId;
     }
 
-    public void setDriverID(int driverID) {
-        this.driverID = driverID;
+    public void setDriverId(int driverID) {
+        this.driverId = driverId;
     }
 
     public String getMobile() {
